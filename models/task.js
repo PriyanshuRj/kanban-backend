@@ -33,6 +33,11 @@ const taskSchema = new Schema({
     type: [mongoose.Schema.ObjectId],
     required: false,
     ref: "Coment"
+  },
+  taskImages: {
+    type:[String],
+    required:false,
+    default:[]
   }
 }, schemaOptions)
 

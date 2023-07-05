@@ -1,37 +1,86 @@
 const Project = require("../models/project");
 const User = require("../models/usermodel");
 
-const createProject = async (req,res) =>{
+const createProject = async (req, res) => {
     try {
 
-        const {title,description} = req.body;
-        if(title && description){
-            
-            const project  = await Project.create({
+        const { title, description } = req.body;
+        if (title && description) {
+
+            const project = await Project.create({
                 owner: req.user._id,
-                title:title,
+                title: title,
                 description: description,
-                members : [req.user._id]
+                members: [req.user._id]
             });
-            const logedInUser = await User.findOne({id:req.user._id});
+            const logedInUser = await User.findOne({ id: req.user._id });
             logedInUser.projects.push(project._id);
             logedInUser.save();
-            res.status(200).json({message:"Project created", project: project});
+            res.status(200).json({ message: "Project created", project: project });
+        }
+        else {
+            res.status(404).json({ message: "Please send complete details" })
         }
     }
-    catch (e){
-        res.status(500).json({message:"Error in creating project"});
+    catch (e) {
+        res.status(500).json({ message: "Error in creating project" });
         console.log("error", e)
     }
 
 }
 
-const getAllProjects = async (req,res) =>{
+const getAllProjects = async (req, res) => {
     const projects = await Project.find({});
-    res.status(200).json({messgae:"Here are all the projects", projects:projects})
+    res.status(200).json({ messgae: "Here are all the projects", projects: projects })
 }
 
+const getSingleProjectData = async (req, res) => {
+    try {
+
+        const { projectId } = req.query;
+        const project = await Project.findOne({ id: projectId }).populate({
+            path: "sections",
+            populate : {
+                path:"tasks"
+            }
+        }
+
+        );
+        res.status(200).json({ message: "Font the project", project: project })
+
+    }
+    catch (e) {
+        res.status(500).json({ message: "Error in creating project" });
+        console.log("error", e)
+    }
+}
+const update = async (req, res) =>{
+    try {
+        const projectId = req.query;
+        const { title, description } = req.body;
+        const project = await Project.findOne({id : projectId});
+        if(project){
+            if(title) project.title = title;
+            if(description) project.description = description;
+            project.save();
+            res.status(200).json({message:"Project Updated", project : project})
+        }
+        else {
+            res.status(404).json({message:"Projet not found"})
+        }
+    }
+    catch (e) {
+        res.status(500).json({ message: "Error in creating project" });
+        console.log("error", e)
+    }
+}
+const deleteProject = async (req, res) => {
+
+}
 module.exports = {
     createProject,
-    getAllProjects
+    getAllProjects,
+    getSingleProjectData,
+    update,
+    deleteProject
 }

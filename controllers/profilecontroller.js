@@ -49,7 +49,6 @@ const getProfile = async (req, res) =>{
             });
 
             await downloadStream.on("error", function (err) {
-                res.status(200).json({foundDevice: foundDevice});
                 image_message="Cannot download the Image!"
                 return res.status(404).json({ message: "Cannot download the Image!",user: logedInuser });
             });
