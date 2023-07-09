@@ -8,7 +8,7 @@ router.post('/login',usercontroller.login);
 router.post('/otpverify',usercontroller.otpverify);
 router.post("/requestotp",usercontroller.requestotp);
 router.post("/requestmobileotp",usercontroller.requestMobileOTP);
-router.post('/otpverify',usercontroller.mobileotpverify);
+router.post('/mobile-otpverify',usercontroller.mobileotpverify);
 router.post("/images",imagecontroller.getImages);
 router.use("/profile", require('./profile'));
 router.use("/project", require('./project'));

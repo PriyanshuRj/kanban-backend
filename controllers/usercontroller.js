@@ -17,7 +17,7 @@ const signup = async function (req, res) {
         const foundUsers = await User.find({ email: email });
         console.log(foundUsers);
         if (foundUsers.length > 0) {
-          res.status(201).json({ message: "User with this email exists" });
+          res.status(200).json({ message: "User with this email exists" });
         }
 
         else {
@@ -25,8 +25,7 @@ const signup = async function (req, res) {
             const encryptedPassword = await bcrypt.hash(password, saltRounds);
             await User.create({ email: email, name: username, password: encryptedPassword, mobileno: mobileno, verified: false });
             
-            var otp = Math.random();
-            otp = otp * 1000000;
+            var otp = Math.floor(100000 + Math.random() * 900000);;
             otp = parseInt(otp);
             console.log(otp);
             
@@ -35,11 +34,11 @@ const signup = async function (req, res) {
                     res.status(301).josn({ message: "err" });
                 }
                 else {
-                    console.log('deleted older otps')
+                    Otp.create({ email: email,mobileno:mobileno, otp: otp });
                 }
             })
             
-            Otp.create({ email: email,mobileno:mobileno, otp: otp });
+            
             if(sendEmailOTP){
 
                 const mailOptions = {
@@ -74,7 +73,7 @@ const signup = async function (req, res) {
                 }
             }
 
-            res.status(200).json({ message: "User created !!" });
+            res.status(201).json({ message: "User created !!" });
         }
        
     }
@@ -155,7 +154,7 @@ const requestMobileOTP = function (req, res){
     }
 }
 const login = async function (req, res) {
-    const { email, password } = req.body;
+    const { email, password, mobileNo } = req.body;
     if (email && password) {
 
         const foundUser = await User.findOne({ email: email });
@@ -183,6 +182,33 @@ const login = async function (req, res) {
         }
                
     }
+    else if (mobileNo && password) {
+
+        const foundUser = await User.findOne({ mobileno: mobileNo });
+        if (!foundUser) {
+          res.status(404).json({ message: "User not found in the data base" });
+        } 
+        
+          
+        else {
+            if (foundUser.verified) {
+                const passwordMatch = await bcrypt.compare(password, foundUser.password);
+                if (passwordMatch) {
+                    const jwtToken = jwt.sign(
+                      { id: foundUser.id, email: foundUser.email },
+                      process.env.JWT_SECRET
+                    );
+                  
+                    res.status(200).json({ message: "Successfully loged in", token: jwtToken });
+                } 
+                else res.status(404).json({ message: "User not found in the data base" });
+            }
+            else {
+                res.status(300).json({ message: "User Not verified, verify first", state: 2 });
+            }
+        }
+               
+    }
     else {
         res.status(404).json({ message: "Please fill all the fields" });
     }
@@ -194,7 +220,9 @@ const otpverify = function (req, res) {
             if (err) {
                 res.status(300).json({ message: "Error occured" });
             }
-            if (!foundotp) res.status(200).json({ message: "Wrong otp" });
+            console.log(foundotp, email, otp)
+            if (!foundotp) return res.status(200).json({ message: "Wrong otp" });
+            
             if (otp === foundotp.otp) {
                 User.findOne({ email: email }, function (err, founduser) {
                     if (err) {
@@ -204,21 +232,21 @@ const otpverify = function (req, res) {
 
                         founduser.verified = true;
                         founduser.save();
-                        res.status(200).json({ message: "OTP is correct !!" });
+                        return res.status(201).json({ message: "OTP is correct !!" });
                     }
                     else {
-                        res.status(404).json({message: "User not found"})
+                        return res.status(404).json({message: "User not found"})
                     }
 
                 })
             }
             else {
-                res.status(200).json({ message: "OTP just entered is wrong" })
+                return res.status(200).json({ message: "OTP just entered is wrong" })
             }
         })
     }
     else {
-        res.status(404).json({ message: "Please fill all the fields" });
+        return res.status(404).json({ message: "Please fill all the fields" });
     }
 }
 const mobileotpverify = function (req, res) {

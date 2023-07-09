@@ -5,7 +5,8 @@ const createProject = async (req, res) => {
     try {
 
         const { title, description } = req.body;
-        if (title && description) {
+        console.log(req.body)
+        if (title ) {
 
             const project = await Project.create({
                 owner: req.user._id,
