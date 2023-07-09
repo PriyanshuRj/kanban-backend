@@ -39,15 +39,14 @@ const getSingleProjectData = async (req, res) => {
     try {
 
         const { projectId } = req.query;
-        const project = await Project.findOne({ id: projectId }).populate({
+        const project = await Project.findOne({ _id: projectId }).populate({
             path: "sections",
             populate : {
                 path:"tasks"
             }
         }
-
         );
-        res.status(200).json({ message: "Font the project", project: project })
+        res.status(200).json({ message: "Found the project", project: project })
 
     }
     catch (e) {
