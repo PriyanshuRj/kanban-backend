@@ -17,6 +17,10 @@ const sectionSchema = new Schema({
     required: false,
     ref: "Task",
     default : []
+  },
+  color: {
+    type: String,
+    default: '#5030E5',
   }
 }, schemaOptions)
 

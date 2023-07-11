@@ -38,6 +38,10 @@ const taskSchema = new Schema({
     type:[String],
     required:false,
     default:[]
+  },
+  deadline: {
+    type: "String",
+    required: false
   }
 }, schemaOptions)
 

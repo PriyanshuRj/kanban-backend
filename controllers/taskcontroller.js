@@ -7,20 +7,21 @@ const mongoose = require('mongoose');
 const create = async (req, res) =>{
     try {
         const { sectionId } = req.query;
-        const {title, content, position, priority } = req.body;
+        const {title, content, position, priority,deadline } = req.body;
         console.log("These are the files", req.files);
         const filenames = req.files.map(obj => obj.filename);
-        if(title && sectionId && content){
+        if(title && sectionId ){
             const task = await Task.create({
                 title:title,
                 content:content,
                 section : sectionId,
                 position: position ? position : 0,
                 priority : priority ? priority : "Low",
-                taskImages : filenames
+                taskImages : filenames,
+                deadline: deadline
             });
-            const section = await Section.findOne({id:sectionId});
-            section.tasks.push(task.id);
+            const section = await Section.findOne({_id:sectionId});
+            section.tasks.push(task._id);
             section.save();
             res.status(201).json({message:"Task created succesfully", task : task})
         }
@@ -29,6 +30,7 @@ const create = async (req, res) =>{
         }
     }
     catch (e) {
+        // console.log(e)
         res.status(500).json({message:"Internal Server error"})
     }
 }
@@ -94,9 +96,56 @@ const deleteTask = async (req,res) =>{
         res.status(500).json({message:"Internal Server error"})
     }
 }
+const updatePosition  = async (req,res) =>{
+    try{
+        const {
+            resourceList,
+            destinationList,
+            resourceSectionId,
+            destinationSectionId
+          } = req.body;
+          var destinationTasks = [];
+          var resourseTasks = [];
+          const resourceListReverse = resourceList.reverse()
+          const destinationListReverse = destinationList.reverse()
+          if ( resourceSectionId !== destinationSectionId ) {
+            for (const key in resourceListReverse) {
+              await Task.findByIdAndUpdate(
+                resourceListReverse[key]._id,
+                { $set: { section: resourceSectionId,
+                  position: key 
+                }}
+              )
+              resourseTasks.push(resourceListReverse[key]._id);
+            }
+            const resorceSection = await Section.findOne({_id:resourceSectionId});
+            resorceSection.tasks= resourseTasks;
+            resorceSection.save();
+          }
+          
+          for ( const key in destinationListReverse) {
+            await Task.findByIdAndUpdate(
+              destinationListReverse[key]._id,
+              { $set: { section: destinationSectionId,
+                position: key 
+              }}
+            )
+            destinationTasks.push(destinationListReverse[key]._id);
+          }
+          const destinationSection = await Section.findOne({_id:destinationSectionId});
+          destinationSection.tasks= destinationTasks;
+          destinationSection.save();
+          
+        return res.status(200).json({message:"Swap successfull"});
+    }
+    catch (e) {
+        return res.status(500).json({message:"Internal Server error"})
+    }
+}
 module.exports = {
     create,
     update,
     asignUser,
-    deleteTask
+    deleteTask,
+    updatePosition
 }

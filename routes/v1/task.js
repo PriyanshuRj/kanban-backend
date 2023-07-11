@@ -5,7 +5,7 @@ const passport = require("passport");
 
 router.post("/", passport.authenticate("jwt", {session: false}),upload.array('files'), taskcontroller.create);
 router.post("/asigne", passport.authenticate("jwt", {session: false}), taskcontroller.asignUser);
-
+router.put("/updatePositions", passport.authenticate("jwt", {session: false}), taskcontroller.updatePosition);
 router.put("/", passport.authenticate("jwt", {session: false}), taskcontroller.update);
 router.delete("/", passport.authenticate("jwt", {session: false}), taskcontroller.deleteTask);
 

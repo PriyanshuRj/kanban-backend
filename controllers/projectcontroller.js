@@ -17,7 +17,7 @@ const createProject = async (req, res) => {
             const logedInUser = await User.findOne({ id: req.user._id });
             logedInUser.projects.push(project._id);
             logedInUser.save();
-            res.status(200).json({ message: "Project created", project: project });
+            res.status(201).json({ message: "Project created", project: project });
         }
         else {
             res.status(404).json({ message: "Please send complete details" })
@@ -46,6 +46,7 @@ const getSingleProjectData = async (req, res) => {
             }
         }
         );
+     
         res.status(200).json({ message: "Found the project", project: project })
 
     }

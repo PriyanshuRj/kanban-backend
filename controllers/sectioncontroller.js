@@ -5,12 +5,13 @@ const mongoose = require('mongoose');
 const create = async (req, res) =>{
     try{
         const { projectId } = req.query;
-        const {title} = req.body;
+        const {title, color} = req.body;
         if(projectId){
-            const project = await Project.findOne({id:projectId});
+            const project = await Project.findOne({_id:projectId});
             const section = await Section.create({
                 title:title ? title : '',
-                project : projectId
+                project : projectId,
+                color : color
             })
             project.sections.push(section._id);
             project.save();
@@ -26,7 +27,7 @@ const create = async (req, res) =>{
     }
 }
 const update = async(req, res) =>{
-    try{
+    try {
         const { sectionId } = req.query;
         const {title} = req.body;
         const section = await Section.findOne({id:sectionId});
