@@ -14,7 +14,7 @@ const createProject = async (req, res) => {
                 description: description,
                 members: [req.user._id]
             });
-            const logedInUser = await User.findOne({ id: req.user._id });
+            const logedInUser = await User.findOne({ _id: req.user._id });
             logedInUser.projects.push(project._id);
             logedInUser.save();
             res.status(201).json({ message: "Project created", project: project });

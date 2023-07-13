@@ -37,7 +37,9 @@ const updateProfile = async (req,res)=>{
 }
 
 const getProfile = async (req, res) =>{
-    var logedInuser = await User.findOne({id : req.user._id}).populate("projects");
+    var logedInuser = await User.findOne({_id:req.user._id}).populate({path: 'projects',
+    model: 'Project'});
+    console.log(logedInuser)
     try {
         var image_message = "";
         if(logedInuser.profilePicture){

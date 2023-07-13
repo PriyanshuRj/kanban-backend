@@ -14,4 +14,5 @@ router.use("/profile", require('./profile'));
 router.use("/project", require('./project'));
 router.use('/section', require('./section'))
 router.use('/task', require('./task'))
+router.use("/invite", require('./invite'))
 module.exports = router;
