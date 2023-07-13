@@ -21,7 +21,6 @@ const getImages = async (req, res) => {
         let filedata = "data:image/png;base64,";
 
         await downloadStream.on("data", function (data) {
-          console.log("called")
           filedata += data.toString('base64');
         });
 

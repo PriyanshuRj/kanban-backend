@@ -46,7 +46,6 @@ const getProfile = async (req, res) =>{
             let downloadStream = bucket.openDownloadStreamByName(logedInuser.profilePicture)
             let filedata = "data:image/png;base64,";
             await downloadStream.on("data", function (data) {
-                console.log("called")
                 filedata += data.toString('base64');
             });
 
