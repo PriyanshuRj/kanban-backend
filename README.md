@@ -10,7 +10,7 @@ This repository contains  ExpressJS API's based backend code that can be used to
 Clone the repository from GitHub.
 
 ```
-$ git clone https://github.com/PriyanshuRj/auth_backend.git
+$ git clone https://github.com/PriyanshuRj/kanban-backend.git
 ```
 
 
