@@ -6,14 +6,12 @@ const conn = mongoose.createConnection(process.env.DB);;
 var bucket;
 conn.once("open", function () {
     bucket = new GridFSBucket(conn, { bucketName: 'uploads' });
-    console.log('connected api')
 });
 
 const updateProfilePicture = async (req,res)=>{
     try{
-
     
-    const logedInuser = await User.findOne({id : req.user._id});
+    const logedInuser = await User.findOne({_id : req.user._id});
     if(logedInuser){
         logedInuser.profilePicture = req.file.filename;
         logedInuser.save();
@@ -31,7 +29,34 @@ const updateProfilePicture = async (req,res)=>{
 }
 
 const updateProfile = async (req,res)=>{
-    const {username} = req.body;
+    try{
+
+        var { username, name, mobileno, email } = req.body;
+        if(req.user.email !== email){
+        const user = await User.findOne({email});
+        if(user) {
+            return res.status(205).json({message:"Another user with this email exists"});
+        }
+    }
+    if(req.user.mobileno !== mobileno){
+        const user = await User.findOne({mobileno});
+        if(user) {
+            return res.status(205).json({message:"Another user with this mobile number exists"});
+        }
+    }
+    await User.findByIdAndUpdate(
+        req.user._id,
+        { $set: { username: username,
+            name: name,
+            mobileno:mobileno,
+            email: email
+        }}
+        )
+        return res.status(200).json({message: "User updated"});
+    }
+    catch(e){
+        return res.status(500).json({message:"Internal server error"})
+    }
 
 
 }
@@ -39,7 +64,6 @@ const updateProfile = async (req,res)=>{
 const getProfile = async (req, res) =>{
     var logedInuser = await User.findOne({_id:req.user._id}).populate({path: 'projects',
     model: 'Project'});
-    console.log(logedInuser)
     try {
         var image_message = "";
         if(logedInuser.profilePicture){

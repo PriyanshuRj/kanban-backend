@@ -8,7 +8,6 @@ const create = async (req, res) =>{
     try {
         const { sectionId } = req.query;
         const {title, content, position, priority,deadline } = req.body;
-        console.log("These are the files", req.files);
         const filenames = req.files.map(obj => obj.filename);
         if(title && sectionId ){
             const task = await Task.create({

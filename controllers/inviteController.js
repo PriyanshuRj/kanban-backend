@@ -7,7 +7,6 @@ async function create (req,res){
     try {
 
         const { email, projectId,username="Priyanshu Rajput" } = req.body;
-        console.log(req.body)
         if (email && projectId ) {
             const project = await Project.findOne({_id: projectId})
             if(project){
@@ -54,7 +53,6 @@ async function create (req,res){
 async function getInvite(req, res){
     try {
         const { inviteId } = req.query;
-        console.log(inviteId)
         const invite = await Invite.findOne({_id: inviteId});
         if(invite){
             if(invite.email== req.user.email){
@@ -82,7 +80,6 @@ async function replyInvite(req, res){
             if(acepted){
                 const project = await Project.findOne({_id: invite.project });
                 const acceptingUser = await User.findOne({email:invite.email });
-                // console.log(project, acceptingUser)
                 project.members.push(acceptingUser._id);
                 acceptingUser.projects.push(project._id);
                 project.save();

@@ -5,7 +5,6 @@ const conn = mongoose.createConnection(process.env.DB);;
 var bucket;
 conn.once("open", function () {
   bucket = new GridFSBucket(conn, { bucketName: 'uploads' });
-  console.log('connected api')
 });
 
 const getImages = async (req, res) => {

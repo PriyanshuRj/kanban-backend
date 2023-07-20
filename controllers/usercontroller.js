@@ -10,7 +10,6 @@ const transporter = require('../config/transoprter')
 
 const signup = async function (req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    console.log(req.body);
     const { username, password, mobileno, email, sendMobileOTP, sendEmailOTP } = req.body;
     if (username && password && mobileno && email) {
 
@@ -27,7 +26,6 @@ const signup = async function (req, res) {
             
             var otp = Math.floor(100000 + Math.random() * 900000);;
             otp = parseInt(otp);
-            console.log(otp);
             
             Otp.deleteMany({ email: email }, function (err, foundotp) {
                 if (err) {
@@ -82,14 +80,12 @@ const signup = async function (req, res) {
     }
 }
 const requestotp = function (req, res) {
-    console.log(req.body.email);
     const email = req.body.email;
     if (email) {
 
         var otp = Math.random();
         otp = otp * 1000000;
         otp = parseInt(otp);
-        console.log(otp);
         Otp.deleteMany({ email: email }, function (err, foundotp) {
             if (err) {
                 res.status(402).josn({ message: "err" });
@@ -126,7 +122,6 @@ const requestMobileOTP = function (req, res){
         var otp = Math.random();
         otp = otp * 1000000;
         otp = parseInt(otp);
-        console.log(otp);
         Otp.deleteMany({ mobileno: mobileno }, function (err, foundotp) {
             if (err) {
                 res.status(402).josn({ message: "err" });
@@ -220,7 +215,6 @@ const otpverify = function (req, res) {
             if (err) {
                 res.status(300).json({ message: "Error occured" });
             }
-            console.log(foundotp, email, otp)
             if (!foundotp) return res.status(200).json({ message: "Wrong otp" });
             
             if (otp === foundotp.otp) {

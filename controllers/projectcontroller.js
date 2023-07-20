@@ -5,7 +5,6 @@ const createProject = async (req, res) => {
     try {
 
         const { title, description } = req.body;
-        console.log(req.body)
         if (title ) {
 
             const project = await Project.create({
