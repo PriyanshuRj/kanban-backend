@@ -2,6 +2,7 @@ const User = require('../models/usermodel');
 const mongoose = require('mongoose')
 const GridFSBucket = require("mongodb").GridFSBucket;
 const conn = mongoose.createConnection(process.env.DB);;
+const deleteImageFromGridFS = require("../helpers/deleteImages")
 
 var bucket;
 conn.once("open", function () {
@@ -13,6 +14,7 @@ const updateProfilePicture = async (req,res)=>{
     
     const logedInuser = await User.findOne({_id : req.user._id});
     if(logedInuser){
+        if(logedInuser.profilePicture) deleteImageFromGridFS([logedInuser.profilePicture]);
         logedInuser.profilePicture = req.file.filename;
         logedInuser.save();
         res.status(200).json({message : "Profile Picture Updated"});

@@ -2,6 +2,8 @@ const Section = require('../models/section');
 const Project = require("../models/project");
 const Task = require("../models/task");
 const mongoose = require('mongoose');
+const deleteImageFromGridFS = require("../helpers/deleteImages")
+
 const create = async (req, res) =>{
     try{
         const { projectId } = req.query;
@@ -44,17 +46,25 @@ const deleteSection = async (req, res) =>{
         const { sectionId } = req.query;
         const section = await Section.findOne({_id : sectionId});
         if(section){
-
+            var ImageArray = [];
             const project = await Project.findOne({_id:section.project});
             await project.sections.remove(sectionId);
             project.save();
+            const tasks = await Task.find({section: sectionId});
+            await tasks.map(async (task)=> {
+                if(task.taskImages && task.taskImages.length > 0){
+                    ImageArray = [...ImageArray, ...task.taskImages];
+                }
+            })
             await Task.deleteMany({ section: sectionId });
             await Section.deleteOne({_id:sectionId});
+            deleteImageFromGridFS(ImageArray);
         }
 
         res.status(200).json({message:"Section deleted"})
     }
     catch (e) {
+        console.log({e})
         res.status(500).json({message:"Internal server error"})
     }
 }

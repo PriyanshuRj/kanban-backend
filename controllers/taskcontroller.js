@@ -3,7 +3,7 @@ const Coment = require("../models/comment");
 const Task = require("../models/task");
 const User = require("../models/usermodel");
 const mongoose = require('mongoose');
-
+const deleteImageFromGridFS = require("../helpers/deleteImages")
 const create = async (req, res) =>{
     try {
         const { sectionId } = req.query;
@@ -37,16 +37,31 @@ const create = async (req, res) =>{
 const update = async (req,res) =>{
     try{
         const { taskId } = req.query;
-        const {title, content, position, priority } = req.body;
+        const {title, content, position, priority, deadline,destinationSectionId } = req.body;
+        const filenames = req.files.map(obj => obj.filename);
         const task = await Task.findOne({_id : taskId});
+        if(destinationSectionId.toString() != task.section.toString()){
+            const section = await Section.findOne({_id:destinationSectionId});
+            section.tasks.push(taskId);
+            section.save();
+            const sourceSection = await Section.findOne({_id:task.section.toString()});
+            var sectionTasks = [...sourceSection.tasks];
+            sectionTasks = sectionTasks.filter((task)=> task.toString() != taskId.toString());
+            sourceSection.tasks = sectionTasks;
+            sourceSection.save();
+        }
         if(title) task.title = title;
         if(content) task.content = content;
         if(position) task.position = position;
         if(priority) task.priority = priority;
+        if(deadline) task.deadline = deadline;
+        if(destinationSectionId) task.section = destinationSectionId;
+        if(filenames && filenames.length) task.taskImages = [ ...task.taskImages, ...filenames];
         task.save();
         res.status(200).json({message:"Task updated succesfully", task:task})
     }
     catch (e) {
+        console.log({e})
         res.status(500).json({message:"Internal Server error"})
     }
 }
@@ -88,6 +103,8 @@ const deleteTask = async (req,res) =>{
             section.save();
             await Coment.deleteMany({ task: taskId });
             await Task.deleteOne({_id:taskId});
+
+            if (task.taskImages.length) deleteImageFromGridFS(task.taskImages);
         }
         res.status(200).json({message:"Asignees updated succesfully", task:task})
     }
@@ -138,6 +155,7 @@ const updatePosition  = async (req,res) =>{
         return res.status(200).json({message:"Swap successfull"});
     }
     catch (e) {
+
         return res.status(500).json({message:"Internal Server error"})
     }
 }
