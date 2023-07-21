@@ -21,7 +21,7 @@ async function create (req,res){
                     to: email, // List of recipients
                     subject: `Invite to join ${project.title}`, // Subject line
                   
-                    html: getInviteTemplate("http://localhost:3000", `http://localhost:3000/invite/${invite._id}`, username, project.title )
+                    html: getInviteTemplate(process.env.FRONTEND_URL, `http://localhost:3000/invite/${invite._id}`, username, project.title )
                 };
             
                 transporter.sendMail(mailOptions, function (err, info) {

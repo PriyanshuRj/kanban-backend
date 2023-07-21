@@ -171,7 +171,7 @@ const login = async function (req, res) {
                 else res.status(404).json({ message: "User not found in the data base" });
             }
             else {
-                res.status(200).json({ message: "User Not verified, verify first", state: 2 });
+                res.status(205).json({ message: "User Not verified, verify first", state: 2 });
             }
         }
                
@@ -185,6 +185,7 @@ const login = async function (req, res) {
         
           
         else {
+            console.log(foundUser)
             if (foundUser.verified) {
                 const passwordMatch = await bcrypt.compare(password, foundUser.password);
                 if (passwordMatch) {
@@ -198,7 +199,7 @@ const login = async function (req, res) {
                 else res.status(404).json({ message: "User not found in the data base" });
             }
             else {
-                res.status(300).json({ message: "User Not verified, verify first", state: 2 });
+                res.status(205).json({ message: "User Not verified, verify first", state: 2 });
             }
         }
                
