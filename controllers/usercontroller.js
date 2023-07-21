@@ -9,7 +9,6 @@ const bcrypt = require("bcrypt");
 const transporter = require('../config/transoprter')
 
 const signup = async function (req, res) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     const { username, password, mobileno, email, sendMobileOTP, sendEmailOTP } = req.body;
     if (username && password && mobileno && email) {
 
