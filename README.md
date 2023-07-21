@@ -1,6 +1,6 @@
 # Kanban Backend
 
-This repository contains  ExpressJS API's based backend code that can be used to add and get a report of a market/mandi.
+This repository contains  ExpressJS API's based backend code that can be used to create, delete, edit, read a Kanban project. 
 
 
 ## 👨🏻‍🔬 Set up and run The Server
@@ -10,7 +10,7 @@ This repository contains  ExpressJS API's based backend code that can be used to
 Clone the repository from GitHub.
 
 ```
-$ git clone https://github.com/PriyanshuRj/auth_backend.git
+$ git clone https://github.com/PriyanshuRj/kanban-backend.git
 ```
 
 
