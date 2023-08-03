@@ -12,7 +12,8 @@ router.post('/mobile-otpverify',usercontroller.mobileotpverify);
 router.post("/images",imagecontroller.getImages);
 router.use("/profile", require('./profile'));
 router.use("/project", require('./project'));
-router.use('/section', require('./section'))
-router.use('/task', require('./task'))
-router.use("/invite", require('./invite'))
+router.use('/section', require('./section'));
+router.use('/task', require('./task'));
+router.use("/invite", require('./invite'));
+router.use("/comment", require("./comment"));
 module.exports = router;

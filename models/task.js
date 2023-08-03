@@ -29,7 +29,7 @@ const taskSchema = new Schema({
     required: false,
     ref: "User"
   },
-  comment:{
+  comments:{
     type: [mongoose.Schema.ObjectId],
     required: false,
     ref: "Coment"

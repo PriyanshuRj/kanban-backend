@@ -5,6 +5,11 @@ const commentSchema = new mongoose.Schema({
         required: false,
         ref: "Task"
     },
+    commenter: {
+        type : mongoose.Schema.ObjectId,
+        required : true,
+        ref  :"User"
+    }, 
     comment:{
         type:String,
         required:true,

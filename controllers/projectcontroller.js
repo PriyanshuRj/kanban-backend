@@ -47,13 +47,28 @@ const getSingleProjectData = async (req, res) => {
             populate: {
                 path: "tasks",
                 populate: {
-                    path: "assignies"
+                    path: "assignies",
+                    
+                },
+                populate : {
+                    path : "comments",
+                    select : {
+                        comment :1,
+                        commenter: 1,
+                    },
+                    populate : {
+                        path : "commenter",
+                        select :{
+                            name: 1
+                        }
+                    }
                 }
             }
         }
         ).populate("members");
-
-        res.status(200).json({ message: "Found the project", project: project })
+        if(project)
+        return res.status(200).json({ message: "Found the project", project: project });
+        else res.status(205).json({message : "Project not found"});
 
     }
     catch (e) {
