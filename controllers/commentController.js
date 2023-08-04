@@ -14,6 +14,7 @@ async function create(req, res) {
             });
             task.comments.push(commentCreated._id);
             task.save();
+            commentCreated.populate("commenter");
             res.status(201).json({message:"Comment Added to Task", comment:commentCreated})
         }
         else {
