@@ -14,11 +14,8 @@ async function create(req, res) {
             });
             task.comments.push(commentCreated._id);
             task.save();
-            const user = {
-                _id : req.user._id,
-                name : req.user.name
-            }
-            commentCreated.commenter = user;
+            
+            commentCreated.commenter = req.user;
             res.status(201).json({message:"Comment Added to Task", comment:commentCreated})
         }
         else {
