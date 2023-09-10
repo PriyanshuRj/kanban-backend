@@ -4,14 +4,18 @@ const MongoStore = require('connect-mongo');
 const session = require('express-session');
 const connect = require("./config/mongoose");
 const router = require("./routes/index.js");
+const ws = require('ws');
 const { default: helmet } = require('helmet');
 require("./auth/passport");
 const cors = require('cors');
 const app = express();
+const http = require('http');
 const bodyParser = require("body-parser");
-
+const { connection } = require("mongoose");
+const {connectSocket} = require("./socket");
+const jwt = require("jsonwebtoken");
 const port = 8000 || process.env.PORT;
-
+const connectSocketService = require("./service/socket");
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -35,8 +39,11 @@ app.use(session({
 app.use("/api",router);
 
 connect().then(async (db) => {
-
-    app.listen(port, function(err){
+    const server = http.createServer(app);
+     
+    // connectSocket(server);
+    connectSocketService(server);
+    server.listen(port, function(err){
         if(err){
             console.log(err);
         }
@@ -44,5 +51,6 @@ connect().then(async (db) => {
             console.log("Server listening at port", port);
         }
     })
+
 })
 

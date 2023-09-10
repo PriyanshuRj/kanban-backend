@@ -2,7 +2,7 @@ const express = require("express");
 const usercontroller = require("../../controllers/usercontroller");
 const imagecontroller = require("../../controllers/imagescontroller");
 const router = express.Router();
-
+ 
 router.post('/signup',usercontroller.signup);
 router.post('/login',usercontroller.login);
 router.post('/otpverify',usercontroller.otpverify);
@@ -16,4 +16,5 @@ router.use('/section', require('./section'));
 router.use('/task', require('./task'));
 router.use("/invite", require('./invite'));
 router.use("/comment", require("./comment"));
+router.use("/conversation", require("./conversation"));
 module.exports = router;

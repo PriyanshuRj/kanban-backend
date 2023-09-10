@@ -14,7 +14,6 @@ async function deleteImageFromGridFS(imageNamesToDelete) {
   try {
     const image = await bucket.find({ filename: imageName }).toArray();
     if (image.length > 0) {
-        console.log({imageName});
         const imageIdToDelete = new ObjectId(image[0]._id);
         const imageObjectId = new ObjectId(imageIdToDelete);
         if(!bucket) return;

@@ -13,7 +13,6 @@ const signup = async function (req, res) {
     if (username && password && mobileno && email) {
 
         const foundUsers = await User.find({ email: email });
-        console.log(foundUsers);
         if (foundUsers.length > 0) {
           res.status(200).json({ message: "User with this email exists" });
         }
@@ -162,7 +161,7 @@ const login = async function (req, res) {
                 const passwordMatch = await bcrypt.compare(password, foundUser.password);
                 if (passwordMatch) {
                     const jwtToken = jwt.sign(
-                      { id: foundUser.id, email: foundUser.email },
+                      { id: foundUser.id, email: foundUser.email, name: foundUser.name },
                       process.env.JWT_SECRET
                     );
                   
@@ -185,7 +184,6 @@ const login = async function (req, res) {
         
           
         else {
-            console.log(foundUser)
             if (foundUser.verified) {
                 const passwordMatch = await bcrypt.compare(password, foundUser.password);
                 if (passwordMatch) {
@@ -216,7 +214,6 @@ const otpverify = function (req, res) {
                 res.status(300).json({ message: "Error occured" });
             }
             if (!foundotp) return res.status(200).json({ message: "Wrong otp" });
-            
             if (otp === foundotp.otp) {
                 User.findOne({ email: email }, function (err, founduser) {
                     if (err) {
